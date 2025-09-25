@@ -110,6 +110,13 @@ public class DemoBlueInnovationApplicationTests {
                 .andReturn().getResponse().getContentAsString();
 
         UtenteSeduto sedutaCreato = objectMapper.readValue(response, UtenteSeduto.class);
+        
+        // POST /seduti - Utente già seduto e sedia in utilizzo
+        jsonSeduta = String.format("{\"utenteId\":%d,\"codiceSedia\":\"%s\"}", utente.getId(), sedia.getCodice());
+        mockMvc.perform(post("/seduti")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(jsonSeduta))
+                .andExpect(status().isConflict());
 
         // GET /seduti/{id}
         mockMvc.perform(get("/seduti/" + sedutaCreato.getId()))

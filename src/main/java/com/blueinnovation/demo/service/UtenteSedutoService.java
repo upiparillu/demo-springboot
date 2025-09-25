@@ -7,6 +7,8 @@ import com.blueinnovation.demo.repository.UtenteSedutoRepository;
 import com.blueinnovation.demo.service.UtenteSedutoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UtenteSedutoService {
@@ -20,10 +22,10 @@ public class UtenteSedutoService {
     @Transactional
     public UtenteSeduto assegnaSedia(Utente utente, Sedia sedia) {
         repository.findByUtente(utente).ifPresent(u -> {
-            throw new RuntimeException("L'utente è già seduto su un'altra sedia");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "L'utente è già seduto su un'altra sedia");
         });
         repository.findBySedia(sedia).ifPresent(s -> {
-            throw new RuntimeException("La sedia è già occupata da un altro utente");
+        	throw new ResponseStatusException(HttpStatus.CONFLICT, "L'utente è già seduto su un'altra sedia");
         });
         return repository.save(new UtenteSeduto(utente, sedia));
     }

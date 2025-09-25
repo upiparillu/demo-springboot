@@ -20,3 +20,7 @@ Aprire nel browser:
 - JDBC URL: jdbc:h2:mem:testdb
 - User: sa
 - Password: (lasciare vuoto)
+
+## Build e avvio con Docker
+- docker build -t demo-springboot .
+- docker run -p 8080:8080 demo-springboot

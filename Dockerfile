@@ -1,19 +1,32 @@
-# 1. Usa immagine ufficiale Java 17 come base
-FROM eclipse-temurin:17-jdk-jammy
+# 1. Usa un'immagine con Java 17
+FROM eclipse-temurin:17-jdk AS build
 
-# 2. Imposta la working directory
+# 2. Imposta la working dir
 WORKDIR /app
 
-# 3. Copia i file Gradle e le sorgenti
-COPY build.gradle settings.gradle ./
-COPY gradle ./gradle
-COPY src ./src
+# 3. Copia i file di gradle wrapper
+COPY gradlew .
+COPY gradle gradle
 
-# 4. Build del progetto
+# 4. Copia i file di progetto
+COPY build.gradle settings.gradle ./
+COPY src src
+
+# 5. Rendi eseguibile gradlew
+RUN chmod +x gradlew
+
+# 6. Esegui la build senza test
 RUN ./gradlew build -x test
 
-# 5. Espone la porta 8080
+# 7. Stage runtime: usa JRE più leggero
+FROM eclipse-temurin:17-jre
+WORKDIR /app
+
+# 8. Copia il jar buildato
+COPY --from=build /app/build/libs/*.jar app.jar
+
+# 9. Espone la porta
 EXPOSE 8080
 
-# 6. Comando per avviare l'app
-CMD ["java", "-jar", "build/libs/demo-0.0.1-SNAPSHOT.jar"]
+# 10. Avvia il jar
+ENTRYPOINT ["java","-jar","app.jar"]

@@ -25,7 +25,7 @@ public class UtenteSedutoService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "L'utente è già seduto su un'altra sedia");
         });
         repository.findBySedia(sedia).ifPresent(s -> {
-        	throw new ResponseStatusException(HttpStatus.CONFLICT, "L'utente è già seduto su un'altra sedia");
+        	throw new ResponseStatusException(HttpStatus.CONFLICT, "La sedia è già occupata");
         });
         return repository.save(new UtenteSeduto(utente, sedia));
     }
